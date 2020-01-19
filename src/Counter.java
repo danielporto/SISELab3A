@@ -1,15 +1,17 @@
+import java.util.concurrent.atomic.AtomicInteger;
+
 class Counter {
-    private int cnt = 0;
+    private AtomicInteger cnt;
     public Counter(int init) {
-        cnt = init;
+        cnt = new AtomicInteger(init);
     }
-    public synchronized void increment() {
-        cnt++;
+    public void increment() {
+        cnt.incrementAndGet();
     }
-    public synchronized void decrement() {
-        cnt--;
+    public void decrement() {
+        cnt.decrementAndGet();
     }
-    public synchronized int value() {
-        return cnt;
+    public int value() {
+        return cnt.get();
     }
 }
