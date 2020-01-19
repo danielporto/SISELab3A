@@ -1,55 +1,42 @@
 public class ExerciseA {
+    // update the number of interactions
     public static final int NUM_ITER = 1000;
-    public static final int NUM_ELEMENTS = 5;
 
+    static class MyThread extends Thread {
+        private String name;
+        private Counter counter;
+        // update the constructor to use a counter
+        MyThread (String name, Counter c) {
+            this.name = name;
+            this.counter = c;
+        }
 
-            static class MyThread extends Thread {
-        private Map<Integer, Integer[]> database;
-        private Random numGenerator;
+        void writeHello() {
+            System.out.println("Hello " + name);
+        }
 
-                 MyThread (Map<Integer, Integer[]> database) {
-                         this.database = database;
-                         this.numGenerator = new Random();
-                     }
+        public void run () {
+            // update the loop
+            for (int i = 0; i < NUM_ITER; i++) {
+                //writeHello();
+                counter.increment();
+            }
+        }
+    }
 
-                 public void run () {
-                         for (int i = 0; i < NUM_ITER; i++) {
-                             	//select an element to change
-                             	int id = numGenerator.nextInt(NUM_ELEMENTS);
-                             	//update the element
-                             	Integer [] element = database.get(id);
-                             	element[0]+=1;
-                            	database.put(id, element);
-                             	}//for
-                         }//run
+    public static void main (String[] args) throws Exception {
+        // initialize a counter
+        Counter myCounter = new Counter(0);
+        // fix the calls to the updated constructor
+        Thread a = new MyThread("A", myCounter);
+        Thread b = new MyThread("B", myCounter);
 
-             }//Threadclass
+        a.start();
+        b.start();
 
-             public static void main (String[] args) throws Exception {
-
-             	Map<Integer, Integer[]> DB = new HashMap<Integer, Integer[]>();
-
-             	// initialize the map
-             	for(int i=0; i < NUM_ELEMENTS; i++) {
-                 		DB.put(i, new Integer[] {0});
-                 	}//for
-
-                 Thread a = new MyThread(DB);
-                 Thread b = new MyThread(DB);
-
-                 a.start();
-                 b.start();
-
-                 a.join();
-                 b.join();
-
-                 // sum the elements in the map
-                 int total = 0;
-                 for(int i=0; i < NUM_ELEMENTS; i++) {
-                         System.out.println("Elements in bucket #"+i+":"+DB.get(i)[0]);
-                 		total += DB.get(i)[0];
-                 	}//for
-
-                 System.out.println("Total items:"+total);
-             }
- }
+        a.join();
+        b.join();
+        // output the final counter value
+        System.out.println(myCounter.value());
+    }
+}
